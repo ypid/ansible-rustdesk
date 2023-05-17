@@ -1,0 +1,22 @@
+---
+
+- name: Ensure that required packages are installed
+  ansible.builtin.package:
+    name:
+      - 'python3-dev'
+    state: 'present'
+  register: rustdesk__register_packages
+  until: rustdesk__register_packages is succeeded
+
+- name: Get deb file
+  get_url:
+    url: 'https://github.com/rustdesk/rustdesk/releases/download/1.1.9/rustdesk-1.1.9.deb'
+    dest: '/var/tmp/rustdesk-1.1.9.deb'
+    checksum: 'sha256:135e357e175c8681592ada1cecbb528364d3a6cd9863db55c1d10908beebbf47'
+
+- name: Install deb file
+  apt:
+    deb: '/var/tmp/rustdesk-1.1.9.deb'
+
+# ID Server and key are configured in user config (.config/rustdesk/RustDesk2.toml).
+# Doing that manually for now to not reset user config.
